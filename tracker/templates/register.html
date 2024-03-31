@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {{ register_form.hidden_tag() }}
+                <h1 class="h3 mb-3 font-weight-normal">Please create your account.</h1>
+                {{ register_form.username.label() }}
+                {{ register_form.username(placeholder="User Name") }}
+
+                {{ register_form.email_address.label() }}
+                {{ register_form.email_address(placeholder="Email Address") }}
+
+                {{ register_form.password1.label() }}
+                {{ register_form.password1(placeholder="Password") }}
+
+                {{ register_form.password2.label() }}
+                {{ register_form.password2(placeholder="Confirm Password") }}
+
+                <br>
+
+                <div>
+                    <h6>Already have an account?</h6>
+                    <a href="{{ url_for('login_page') }}">Login</a>
+                </div>
+
+                {{ register_form.submit() }}
+    </form>
+{% endblock %}

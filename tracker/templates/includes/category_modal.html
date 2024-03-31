@@ -1,0 +1,23 @@
+<div class="modal fade" id="Modal-Add-Category" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">
+          Add a new category
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">x</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Enter the name of the new modal you want to add.
+        <form method="POST">
+          {{ category_form.hidden_tag() }}
+          {{ category_form.name.label() }}
+          {{ category_form.name }}
+          {{ category_form.submit(class="btn btn-primary") }}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    {% include 'includes/category_modal.html' %}
+    <h1>Home</h1>
+
+    <!-- Submitting expenses -->
+    <h2>Submit Expense</h2>
+    <form method="post">
+        {{ expense_form.hidden_tag() }}
+        <h1>Home</h1>
+
+        {{ expense_form.name.label() }}
+        {{ expense_form.name }}
+
+        {{ expense_form.category.label() }}
+        {{ expense_form.category(id='category') }}
+
+        <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-Add-Category">Add Category</button>
+
+        {{ expense_form.amount.label() }}
+        {{ expense_form.amount }}
+
+        {{ expense_form.submit }}
+    </form>
+
+    <!-- Displaying expenses -->
+    <h2>Expenses</h2>
+    <table class="table table-hover table-dark">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Price</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for expense in expenses %}
+        <tr>
+            <td>{{ expense.expense_id }}</td>
+            <td>{{ expense.name }}</td>
+            <td>{{ expense.category }}</td>
+            <td>{{ "%.2f"|format(expense.amount_rounded) }}$</td>
+            <td>{{ expense.date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
