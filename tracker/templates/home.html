@@ -42,13 +42,19 @@ Home
         </thead>
         <tbody>
         {% for expense in expenses %}
-        <tr>
-            <td>{{ expense.expense_id }}</td>
-            <td>{{ expense.name }}</td>
-            <td>{{ expense.category }}</td>
-            <td>{{ "%.2f"|format(expense.amount_rounded) }}$</td>
-            <td>{{ expense.date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
-        </tr>
+            {% include 'includes/expense_modal.html' %}
+            <tr>
+                <td>{{ expense.expense_id }}</td>
+                <td>{{ expense.name }}</td>
+                <td>{{ expense.category }}</td>
+                <td>{{ "%.2f"|format(expense.amount_rounded) }}$</td>
+                <td>{{ expense.date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+                <td>
+                    <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Expense">
+                        Delete
+                    </button>
+                </td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>

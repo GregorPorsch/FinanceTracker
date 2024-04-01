@@ -1,7 +1,7 @@
 from tracker import app, db
 from tracker.models import User, Expense, Category
 from flask import render_template, redirect, url_for, flash, request
-from tracker.forms import RegisterForm, LoginForm, ExpenseForm, CategoryForm
+from tracker.forms import RegisterForm, LoginForm, ExpenseForm, CategoryForm, DeleteExpenseForm
 from flask_login import login_user, logout_user, login_required, current_user
 
 from tracker import app
@@ -12,6 +12,7 @@ from tracker import app
 def home_page():
     expense_form = ExpenseForm()
     category_form = CategoryForm()
+    delete_expense_form = DeleteExpenseForm()
 
     if "submit_expense" in request.form and expense_form.validate_on_submit():
         expense_to_create = Expense(name=expense_form.name.data,
@@ -38,8 +39,22 @@ def home_page():
         for err_msg in category_form.errors.values():
             flash(err_msg[0], category="danger")
 
+    if "delete_expense" in request.form and delete_expense_form.validate_on_submit():
+        expense_to_delete = Expense.query.filter_by(expense_id=request.form.get("deleted_expense")).first()
+        if expense_to_delete:
+            db.session.delete(expense_to_delete)
+            db.session.commit()
+            flash(f'Expense "{expense_to_delete.name}" deleted successfully!', category='info')
+            return redirect(url_for('home_page'))
+        else:
+            flash(f'Expense not found!', category='danger')
+
+    if delete_expense_form.errors != {}:
+        for err_msg in delete_expense_form.errors.values():
+            flash(err_msg[0], category="danger")
+
     expenses = Expense.query.filter_by(user_id=current_user.user_id)
-    return render_template('home.html', expenses=expenses, expense_form=expense_form, category_form=category_form)
+    return render_template('home.html', expenses=expenses, expense_form=expense_form, category_form=category_form, delete_expense_form=delete_expense_form)
 
 @app.route('/statistics', methods=["GET", "POST"])
 @login_required

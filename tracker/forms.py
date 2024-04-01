@@ -55,3 +55,6 @@ class CategoryForm(FlaskForm):
 
     name = StringField(label="Category Name", validators=[Length(min=1, max=30), DataRequired()])
     submit = SubmitField(label="Add category", name="submit_category")
+
+class DeleteExpenseForm(FlaskForm):
+    submit = SubmitField(label="Delete", name="delete_expense")
