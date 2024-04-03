@@ -1,8 +1,10 @@
 from tracker import app, db
 from tracker.models import User, Transaction, Category
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from tracker.forms import RegisterForm, LoginForm, TransactionForm, CategoryForm, DeleteTransactionForm
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy import func, and_
+from datetime import datetime, timedelta
 
 from tracker import app
 
@@ -21,8 +23,14 @@ def home_page():
                                     amount=transaction_form.amount.data,
                                     user_id=current_user.user_id)
         db.session.add(transaction_to_create)
+
+        if transaction_form.type.data == "Expense":
+            current_user.expenses += float(transaction_form.amount.data)
+        else:
+            current_user.income += float(transaction_form.amount.data)
+
         db.session.commit()
-        flash(f'Expense "{transaction_to_create.name}" added successfully!', category='success')
+        flash(f'Transaction "{transaction_to_create.name}" added successfully!', category='success')
         return redirect(url_for('home_page'))
 
     if transaction_form.errors != {}:
@@ -41,7 +49,7 @@ def home_page():
             flash(err_msg[0], category="danger")
 
     if "delete_transaction" in request.form and delete_transaction_form.validate_on_submit():
-        transaction_to_delete = Transaction.query.filter_by(transaction_id_id=request.form.get("deleted_transaction")).first()
+        transaction_to_delete = Transaction.query.filter_by(transaction_id=request.form.get("deleted_transaction")).first()
         if transaction_to_delete:
             db.session.delete(transaction_to_delete)
             db.session.commit()
@@ -106,3 +114,61 @@ def logout_page():
     logout_user()
     flash("You have been successfully logged out!", category="info")
     return redirect(url_for('login_page'))
+
+@app.route('/api/expenses_by_category', methods=["GET"])
+@login_required
+def expenses_by_category():
+    expenses = Transaction.query.filter_by(user_id=current_user.user_id, type="Expense").all()
+    return jsonify([{"amount": expense.amount_rounded, "category": expense.category} for expense in expenses])
+
+@app.route('/api/incomes_by_category', methods=["GET"])
+@login_required
+def incomes_by_category():
+    incomes = Transaction.query.filter_by(user_id=current_user.user_id, type="Income").all()
+    return jsonify([{"amount": income.amount_rounded, "category": income.category} for income in incomes])
+
+
+@app.route('/api/transactions_over_time', methods=["GET"])
+@login_required
+def transactions_over_time():
+    time_period = request.args.get('time_period', default='month', type=str)
+
+    if time_period == 'month':
+        start_date = datetime.now() - timedelta(days=30)
+    elif time_period == 'week':
+        start_date = datetime.now() - timedelta(weeks=1)
+    else:
+        start_date = datetime.now() - timedelta(days=1)
+
+    transactions = db.session.query(
+        func.date(Transaction.date).label('date'),
+        func.sum(Transaction.amount_rounded).label('total'),
+        Transaction.type
+    ).filter(
+        and_(
+            Transaction.user_id == current_user.user_id,
+            Transaction.date >= start_date
+        )
+    ).group_by(
+        'date',
+        Transaction.type
+    ).all()
+
+    # Initialize data for all dates within the selected time period
+    data = {}
+    current_date = start_date
+    while current_date <= datetime.now():
+        date_str = current_date.strftime('%Y-%m-%d')
+        data[date_str] = {'income': 0, 'expense': 0}
+        current_date += timedelta(days=1)
+
+    # Update data with actual transaction totals
+    for transaction in transactions:
+        transaction_date_object = datetime.strptime(transaction.date, '%Y-%m-%d')
+        date = transaction_date_object.strftime('%Y-%m-%d')
+        if transaction.type == 'Income':
+            data[date]['income'] = transaction.total
+        else:
+            data[date]['expense'] = transaction.total
+
+    return jsonify(data)
