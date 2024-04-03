@@ -1,7 +1,7 @@
 from tracker import app, db
-from tracker.models import User, Expense, Category
+from tracker.models import User, Transaction, Category
 from flask import render_template, redirect, url_for, flash, request
-from tracker.forms import RegisterForm, LoginForm, ExpenseForm, CategoryForm, DeleteExpenseForm
+from tracker.forms import RegisterForm, LoginForm, TransactionForm, CategoryForm, DeleteTransactionForm
 from flask_login import login_user, logout_user, login_required, current_user
 
 from tracker import app
@@ -10,22 +10,23 @@ from tracker import app
 @app.route('/home', methods=["GET", "POST"])
 @login_required
 def home_page():
-    expense_form = ExpenseForm()
+    transaction_form = TransactionForm()
     category_form = CategoryForm()
-    delete_expense_form = DeleteExpenseForm()
+    delete_transaction_form = DeleteTransactionForm()
 
-    if "submit_expense" in request.form and expense_form.validate_on_submit():
-        expense_to_create = Expense(name=expense_form.name.data,
-                                    category=expense_form.category.data,
-                                    amount=expense_form.amount.data,
+    if "submit_transaction" in request.form and transaction_form.validate_on_submit():
+        transaction_to_create = Transaction(name=transaction_form.name.data,
+                                    type=transaction_form.type.data,
+                                    category=transaction_form.category.data,
+                                    amount=transaction_form.amount.data,
                                     user_id=current_user.user_id)
-        db.session.add(expense_to_create)
+        db.session.add(transaction_to_create)
         db.session.commit()
-        flash(f'Expense "{expense_to_create.name}" added successfully!', category='success')
+        flash(f'Expense "{transaction_to_create.name}" added successfully!', category='success')
         return redirect(url_for('home_page'))
 
-    if expense_form.errors != {}:
-        for err_msg in expense_form.errors.values():
+    if transaction_form.errors != {}:
+        for err_msg in transaction_form.errors.values():
             flash(err_msg[0], category="danger")
 
     if "submit_category" in request.form and category_form.validate_on_submit():
@@ -39,22 +40,22 @@ def home_page():
         for err_msg in category_form.errors.values():
             flash(err_msg[0], category="danger")
 
-    if "delete_expense" in request.form and delete_expense_form.validate_on_submit():
-        expense_to_delete = Expense.query.filter_by(expense_id=request.form.get("deleted_expense")).first()
-        if expense_to_delete:
-            db.session.delete(expense_to_delete)
+    if "delete_transaction" in request.form and delete_transaction_form.validate_on_submit():
+        transaction_to_delete = Transaction.query.filter_by(transaction_id_id=request.form.get("deleted_transaction")).first()
+        if transaction_to_delete:
+            db.session.delete(transaction_to_delete)
             db.session.commit()
-            flash(f'Expense "{expense_to_delete.name}" deleted successfully!', category='info')
+            flash(f'Transaction "{transaction_to_delete.name}" deleted successfully!', category='info')
             return redirect(url_for('home_page'))
         else:
-            flash(f'Expense not found!', category='danger')
+            flash(f'Transaction not found!', category='danger')
 
-    if delete_expense_form.errors != {}:
-        for err_msg in delete_expense_form.errors.values():
+    if delete_transaction_form.errors != {}:
+        for err_msg in delete_transaction_form.errors.values():
             flash(err_msg[0], category="danger")
 
-    expenses = Expense.query.filter_by(user_id=current_user.user_id)
-    return render_template('home.html', expenses=expenses, expense_form=expense_form, category_form=category_form, delete_expense_form=delete_expense_form)
+    transactions = Transaction.query.filter_by(user_id=current_user.user_id)
+    return render_template('home.html', transactions=transactions, transaction_form=transaction_form, category_form=category_form, delete_transaction_form=delete_transaction_form)
 
 @app.route('/statistics', methods=["GET", "POST"])
 @login_required

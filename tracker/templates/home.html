@@ -8,49 +8,54 @@ Home
     {% include 'includes/category_modal.html' %}
     <h1>Home</h1>
 
-    <!-- Submitting expenses -->
-    <h2>Submit Expense</h2>
+    <!-- Submitting Transactions -->
+    <h2>Submit Transaction</h2>
     <form method="post">
-        {{ expense_form.hidden_tag() }}
+        {{ transaction_form.hidden_tag() }}
         <h1>Home</h1>
 
-        {{ expense_form.name.label() }}
-        {{ expense_form.name }}
+        {{ transaction_form.name.label() }}
+        {{ transaction_form.name }}
 
-        {{ expense_form.category.label() }}
-        {{ expense_form.category(id='category') }}
+        {{ transaction_form.type.label() }}
+        {{ transaction_form.type }}
+
+        {{ transaction_form.category.label() }}
+        {{ transaction_form.category(id='category') }}
 
         <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-Add-Category">Add Category</button>
 
-        {{ expense_form.amount.label() }}
-        {{ expense_form.amount }}
+        {{ transaction_form.amount.label() }}
+        {{ transaction_form.amount }}
 
-        {{ expense_form.submit }}
+        {{ transaction_form.submit }}
     </form>
 
-    <!-- Displaying expenses -->
-    <h2>Expenses</h2>
+    <!-- Displaying Transactions -->
+    <h2>Transactions</h2>
     <table class="table table-hover table-dark">
         <thead>
         <tr>
             <th scope="col">ID</th>
             <th scope="col">Name</th>
+            <th scope="col">Type</th>
             <th scope="col">Category</th>
             <th scope="col">Price</th>
             <th scope="col">Date</th>
         </tr>
         </thead>
         <tbody>
-        {% for expense in expenses %}
-            {% include 'includes/expense_modal.html' %}
+        {% for transaction in transactions %}
+            {% include 'includes/transaction_modal.html' %}
             <tr>
-                <td>{{ expense.expense_id }}</td>
-                <td>{{ expense.name }}</td>
-                <td>{{ expense.category }}</td>
-                <td>{{ "%.2f"|format(expense.amount_rounded) }}$</td>
-                <td>{{ expense.date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+                <td>{{ transaction.transaction_id }}</td>
+                <td>{{ transaction.name }}</td>
+                <td>{{ transaction.type }}</td>
+                <td>{{ transaction.category }}</td>
+                <td>{{ "%.2f"|format(transaction.amount_rounded) }}$</td>
+                <td>{{ transaction.date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
                 <td>
-                    <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Expense">
+                    <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Transaction">
                         Delete
                     </button>
                 </td>

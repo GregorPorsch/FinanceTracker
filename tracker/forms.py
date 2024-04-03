@@ -28,18 +28,19 @@ class LoginForm(FlaskForm):
     password = PasswordField(label="Password:", validators=[DataRequired()])
     submit = SubmitField(label="Sign in")
 
-class ExpenseForm(FlaskForm):
+class TransactionForm(FlaskForm):
     def validate_amount(self, amount_to_check):
         if not amount_to_check.data or amount_to_check.data <= 0:
             raise ValidationError("Please enter a positive amount!")
 
     name = StringField(label="Name", validators=[Length(min=1, max=30), DataRequired()])
+    type = SelectField(label="Type", validators=[DataRequired()], choices=[("Expense", "Expense"), ("Income", "Income")])
     category = SelectField(label="Category", validators=[DataRequired()])
     amount = DecimalField(label="Amount", validators=[DataRequired()], places=2, default=0.0)
-    submit = SubmitField(label="Submit expense", name="submit_expense")
+    submit = SubmitField(label="Submit transaction", name="submit_transaction")
 
     def __init__(self, *args, **kwargs):
-        super(ExpenseForm, self).__init__(*args, **kwargs)
+        super(TransactionForm, self).__init__(*args, **kwargs)
         categories = Category.query.filter_by(user_id=current_user.user_id).all()
         if categories:
             self.category.choices = [(category.name, category.name) for category in categories]
@@ -56,5 +57,5 @@ class CategoryForm(FlaskForm):
     name = StringField(label="Category Name", validators=[Length(min=1, max=30), DataRequired()])
     submit = SubmitField(label="Add category", name="submit_category")
 
-class DeleteExpenseForm(FlaskForm):
-    submit = SubmitField(label="Delete", name="delete_expense")
+class DeleteTransactionForm(FlaskForm):
+    submit = SubmitField(label="Delete", name="delete_transaction")

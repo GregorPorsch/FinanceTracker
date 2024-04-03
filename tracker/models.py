@@ -12,6 +12,8 @@ class User(db.Model, UserMixin):
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
     expenses = db.Column(db.Integer(), default=0)
+    income = db.Column(db.Integer(), default=0)
+    transactions = db.relationship('Transaction', backref='owned_user', lazy=True)
 
     def get_id(self):
         return self.user_id
@@ -30,9 +32,10 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f'User {self.username}'
 
-class Expense(db.Model):
-    expense_id = db.Column(db.Integer(), primary_key=True)
+class Transaction(db.Model):
+    transaction_id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=30), nullable=False)
+    type = db.Column(db.String(length=30), nullable=False)
     category = db.Column(db.String(length=30), nullable=False)
     amount_rounded = db.Column(db.Float(), nullable=False)
     date = db.Column(db.DateTime(), nullable=False, default=datetime.now())
@@ -47,7 +50,7 @@ class Expense(db.Model):
         self.amount_rounded = round(amount_to_add, 2)
 
     def __repr__(self):
-        return f'Expense {self.name}'
+        return f'Transaction {self.name}'
 
 class Category(db.Model):
     category_id = db.Column(db.Integer(), primary_key=True)
