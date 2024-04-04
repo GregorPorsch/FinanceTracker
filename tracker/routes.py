@@ -1,9 +1,9 @@
 from tracker import app, db
 from tracker.models import User, Transaction, Category
 from flask import render_template, redirect, url_for, flash, request, jsonify
-from tracker.forms import RegisterForm, LoginForm, TransactionForm, CategoryForm, DeleteTransactionForm
+from tracker.forms import RegisterForm, LoginForm, TransactionForm, CategoryForm, DeleteTransactionForm, FilterForm
 from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, extract
 from datetime import datetime, timedelta
 
 from tracker import app
@@ -16,12 +16,14 @@ def home_page():
     transaction_form = TransactionForm()
     category_form = CategoryForm()
     delete_transaction_form = DeleteTransactionForm()
+    filter_form = FilterForm()
 
     if "submit_transaction" in request.form and transaction_form.validate_on_submit():
         transaction_to_create = Transaction(name=transaction_form.name.data,
                                     type=transaction_form.type.data,
                                     category=transaction_form.category.data,
                                     amount=transaction_form.amount.data,
+                                    date=transaction_form.date.data,
                                     user_id=current_user.user_id)
         db.session.add(transaction_to_create)
 
@@ -63,8 +65,35 @@ def home_page():
         for err_msg in delete_transaction_form.errors.values():
             flash(err_msg[0], category="danger")
 
-    transactions = Transaction.query.filter_by(user_id=current_user.user_id)
-    return render_template('home.html', transactions=transactions, transaction_form=transaction_form, category_form=category_form, delete_transaction_form=delete_transaction_form)
+    # Start with a base query
+    query = Transaction.query.filter_by(user_id=current_user.user_id)
+
+    # If the form validates, add filters based on the form data
+    if filter_form.validate_on_submit():
+        if filter_form.type.data and filter_form.type.data != "All":
+            query = query.filter(Transaction.type == filter_form.type.data)
+        if filter_form.date.data:
+            query = query.filter(extract('year', Transaction.date) == filter_form.date.data.year,
+                                 extract('month', Transaction.date) == filter_form.date.data.month,
+                                 extract('day', Transaction.date) == filter_form.date.data.day)
+        if filter_form.category.data and filter_form.category.data != "All":
+            query = query.filter(Transaction.category == filter_form.category.data)
+        if filter_form.price.data:
+            query = query.filter(Transaction.amount_rounded == filter_form.price.data)
+
+    # Execute the query to get the transactions
+    transactions = query.all()
+
+    if filter_form.errors != {}:
+        for err_msg in filter_form.errors.values():
+            flash("Filter: " + err_msg[0], category="danger")
+
+    return render_template('home.html',
+                           transactions=transactions,
+                           transaction_form=transaction_form,
+                           category_form=category_form,
+                           delete_transaction_form=delete_transaction_form,
+                           filter_form=filter_form)
 
 @app.route('/statistics', methods=["GET", "POST"])
 @login_required

@@ -28,11 +28,32 @@ Home
         {{ transaction_form.amount.label() }}
         {{ transaction_form.amount }}
 
+        {{ transaction_form.date.label() }}
+        {{ transaction_form.date }}
+
         {{ transaction_form.submit }}
     </form>
 
     <!-- Displaying Transactions -->
     <h2>Transactions</h2>
+    <h4>Filter Transactions</h4>
+    <form method="post">
+        {{ filter_form.hidden_tag() }}
+
+        {{ filter_form.type.label() }}
+        {{ filter_form.type }}
+
+        {{ filter_form.date.label() }}
+        {{ filter_form.date }}
+
+        {{ filter_form.category.label() }}
+        {{ filter_form.category }}
+
+        {{ filter_form.price.label() }}
+        {{ filter_form.price }}
+
+        {{ filter_form.submit }}
+    </form>
     <table class="table table-hover table-dark">
         <thead>
         <tr>
@@ -53,7 +74,7 @@ Home
                 <td>{{ transaction.type }}</td>
                 <td>{{ transaction.category }}</td>
                 <td>{{ "%.2f"|format(transaction.amount_rounded) }}$</td>
-                <td>{{ transaction.date.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+                <td>{{ transaction.date.strftime('%d-%m-%Y') }}</td>
                 <td>
                     <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Transaction">
                         Delete

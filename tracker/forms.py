@@ -1,7 +1,7 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField, DecimalField
-from wtforms.validators import Length, DataRequired, Email, EqualTo, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, SelectField, DecimalField, DateField
+from wtforms.validators import Length, DataRequired, Email, EqualTo, ValidationError, Optional
 
 from tracker.models import Category
 from tracker.models import User
@@ -37,6 +37,7 @@ class TransactionForm(FlaskForm):
     type = SelectField(label="Type", validators=[DataRequired()], choices=[("Expense", "Expense"), ("Income", "Income")])
     category = SelectField(label="Category", validators=[DataRequired()])
     amount = DecimalField(label="Amount", validators=[DataRequired()], places=2, default=0.0)
+    date = DateField(label="Date", validators=[DataRequired()], format='%Y-%m-%d')
     submit = SubmitField(label="Submit transaction", name="submit_transaction")
 
     def __init__(self, *args, **kwargs):
@@ -63,3 +64,18 @@ class DeleteTransactionForm(FlaskForm):
 class TransactionHistoryForm(FlaskForm):
     time_period = SelectField(label="Time Period", validators=[DataRequired()], choices=[("week", "Week"), ("month", "Month"), ("year", "Year")])
     submit = SubmitField(label="Get transactions", name="get_transactions")
+
+class FilterForm(FlaskForm):
+    type = SelectField(label="Type", validators=[Optional()], choices=[("All", "All"), ("Expense", "Expense"), ("Income", "Income")])
+    date = DateField(label="Date", validators=[Optional()], format='%Y-%m-%d')
+    category = SelectField(label="Category", validators=[Optional()], choices=[("All", "All")])
+    price = DecimalField(label="Price", validators=[Optional()], places=2, default=0.0)
+    submit = SubmitField(label="Filter", validators=[Optional()], name="filter_transactions")
+
+    def __init__(self, *args, **kwargs):
+        super(FilterForm, self).__init__(*args, **kwargs)
+        categories = Category.query.filter_by(user_id=current_user.user_id).all()
+        if categories:
+            self.category.choices = [("All", "All")] + [(category.name, category.name) for category in categories]
+        else:
+            self.category.choices = [("All", "All")]
