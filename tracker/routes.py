@@ -183,3 +183,11 @@ def transactions_over_time():
             data[date]['expense'] = transaction.total
 
     return jsonify(data)
+
+@app.route('/api/total_values', methods=["GET"])
+@login_required
+def total_values():
+    total_income = db.session.query(func.sum(Transaction.amount_rounded)).filter_by(user_id=current_user.user_id, type="Income").scalar()
+    total_expenses = db.session.query(func.sum(Transaction.amount_rounded)).filter_by(user_id=current_user.user_id, type="Expense").scalar()
+    total_budget = round(total_income - total_expenses, 2)
+    return jsonify({"total_expenses": total_expenses, "total_income": total_income, "total_budget": total_budget})

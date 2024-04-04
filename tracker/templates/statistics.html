@@ -7,6 +7,17 @@ Statistics
 {% block content %}
 
     <div class="row" style="width: 40%;">
+        <div class="total_budget_widget" style="width: 100%;">
+            <h1>Total Budget</h1>
+            <h2 id="total_budget"></h2>
+
+            <h1>Total Income</h1>
+            <h2 id="total_income"></h2>
+
+            <h1>Total Budget</h1>
+            <h2 id="total_expenses"></h2>
+        </div>
+
         <div class="epxense_pie_chart_container" style="width: 100%">
             <div class="col-md-4"><!-- form/results will go here --></div>
             <div class="col-md-8">
@@ -53,6 +64,10 @@ Statistics
         }
 
         window.onload = function() {
+            const total_budget = document.getElementById('total_budget');
+            const total_income = document.getElementById('total_income');
+            const total_expenses = document.getElementById('total_expenses');
+
             const expense_pi_chart_canvas = document.getElementById('expense_pie_chart');
             const expense_pie_chart_ctx = expense_pi_chart_canvas.getContext('2d');
 
@@ -63,6 +78,14 @@ Statistics
             const transactions_line_graph_ctx = transactions_line_graph_canvas.getContext('2d')
 
             // Fetch the data from the server
+            fetch('/api/total_values')
+                .then(response => response.json())
+                .then(data => {
+                    total_budget.innerText = data.total_budget;
+                    total_income.innerText = data.total_income;
+                    total_expenses.innerText = data.total_expenses;
+                });
+
             fetch('/api/expenses_by_category')
                 .then(response => response.json())
                 .then(data => {
