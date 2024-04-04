@@ -24,6 +24,12 @@ Statistics
         </div>
 
         <div class="transactions_line_graph_container" style="width: 100%;">
+            <form method="post">
+                {{ transaction_history_form.hidden_tag() }}
+                {{ transaction_history_form.time_period.label() }}
+                {{ transaction_history_form.time_period }}
+                {{ transaction_history_form.submit() }}
+            </form>
             <div class="col-md-4"><!-- form/results will go here --></div>
             <div class="col-md-8">
                 <h1>Transactions</h1>
@@ -133,7 +139,7 @@ Statistics
                     });
                 });
 
-            fetch('/api/transactions_over_time?time_period=month')
+            fetch('/api/transactions_over_time?time_period={{ time_period }}')
                 .then(response => response.json())
                 .then(data => {
                     let dates = Object.keys(data);

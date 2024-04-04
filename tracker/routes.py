@@ -7,6 +7,7 @@ from sqlalchemy import func, and_
 from datetime import datetime, timedelta
 
 from tracker import app
+from tracker.forms import TransactionHistoryForm
 
 @app.route('/', methods=["GET", "POST"])
 @app.route('/home', methods=["GET", "POST"])
@@ -68,7 +69,17 @@ def home_page():
 @app.route('/statistics', methods=["GET", "POST"])
 @login_required
 def statistics_page():
-    return render_template('statistics.html')
+    transaction_history_form = TransactionHistoryForm()
+
+    if transaction_history_form.validate_on_submit():
+        print("Hello, world!")
+        return render_template('statistics.html', transaction_history_form=transaction_history_form, time_period=transaction_history_form.time_period.data)
+
+    if transaction_history_form.errors != {}:
+        for err_msg in transaction_history_form.errors.values():
+            flash(err_msg[0], category="danger")
+
+    return render_template('statistics.html', transaction_history_form=transaction_history_form, time_period='week')
 
 @app.route('/register', methods=["GET", "POST"])
 def register_page():
@@ -138,7 +149,7 @@ def transactions_over_time():
     elif time_period == 'week':
         start_date = datetime.now() - timedelta(weeks=1)
     else:
-        start_date = datetime.now() - timedelta(days=1)
+        start_date = datetime.now() - timedelta(days=365)
 
     transactions = db.session.query(
         func.date(Transaction.date).label('date'),

@@ -59,3 +59,7 @@ class CategoryForm(FlaskForm):
 
 class DeleteTransactionForm(FlaskForm):
     submit = SubmitField(label="Delete", name="delete_transaction")
+
+class TransactionHistoryForm(FlaskForm):
+    time_period = SelectField(label="Time Period", validators=[DataRequired()], choices=[("week", "Week"), ("month", "Month"), ("year", "Year")])
+    submit = SubmitField(label="Get transactions", name="get_transactions")
