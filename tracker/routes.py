@@ -102,13 +102,17 @@ def statistics_page():
 
     if transaction_history_form.validate_on_submit():
         print("Hello, world!")
-        return render_template('statistics.html', transaction_history_form=transaction_history_form, time_period=transaction_history_form.time_period.data)
+        return render_template('statistics.html',
+                               transaction_history_form=transaction_history_form,
+                               time_period=transaction_history_form.time_period.data)
 
     if transaction_history_form.errors != {}:
         for err_msg in transaction_history_form.errors.values():
             flash(err_msg[0], category="danger")
 
-    return render_template('statistics.html', transaction_history_form=transaction_history_form, time_period='week')
+    return render_template('statistics.html',
+                           transaction_history_form=transaction_history_form,
+                           time_period='week')
 
 @app.route('/register', methods=["GET", "POST"])
 def register_page():
