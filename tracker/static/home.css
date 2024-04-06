@@ -1,0 +1,115 @@
+.submit-transaction-container {
+    max-width: 70%;
+    margin: 5em auto;
+    padding: 2em;
+    background-color: var(--white);
+    border-radius: 2em;
+    box-shadow: 5px 5px 13px 5px rgba(0,0,0,0.3);
+}
+
+.submit-transaction-container h2 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.submit-transaction-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    justify-content: center;
+    align-items: center;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 0.7em;
+    margin-bottom: 1em;
+    border-radius: 0.3em;
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+}
+
+.row .col {
+    flex: 2;
+}
+
+.row .col:nth-child(3) {
+    flex: 3;
+}
+
+.row select,
+.row input {
+    padding: 0.5em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: var(--white);
+    color: var(--dark-blue);
+    font-size: 1em;
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+    width: 100%;
+    outline: none;
+}
+
+.row select {
+    cursor: pointer;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-select {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+}
+
+.add-category-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 2.25em;
+    padding: 0.7em;
+    background-color: var(--grayish-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 3em;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.add-category-button:hover {
+    opacity: 70%;
+}
+
+.submit-button {
+    width: 100%;
+}
+
+.submit-button input[type="submit"] {
+    width: 100%;
+    padding: 0.7em;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 3em;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.submit-button input[type="submit"]:hover {
+    opacity: 80%;
+}

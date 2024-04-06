@@ -1,88 +1,95 @@
 {% extends "base.html" %}
 
 {% block title %}
-Home
+    Home
 {% endblock %}
 
 {% block content %}
     {% include 'includes/category_modal.html' %}
-    <h1>Home</h1>
 
     <!-- Submitting Transactions -->
-    <h2>Submit Transaction</h2>
-    <form method="post">
-        {{ transaction_form.hidden_tag() }}
-        <h1>Home</h1>
-
-        {{ transaction_form.name.label() }}
-        {{ transaction_form.name }}
-
-        {{ transaction_form.type.label() }}
-        {{ transaction_form.type }}
-
-        {{ transaction_form.category.label() }}
-        {{ transaction_form.category(id='category') }}
-
-        <button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-Add-Category">Add Category</button>
-
-        {{ transaction_form.amount.label() }}
-        {{ transaction_form.amount }}
-
-        {{ transaction_form.date.label() }}
-        {{ transaction_form.date }}
-
-        {{ transaction_form.submit }}
-    </form>
+    <div class="submit-transaction-container">
+        <h2>Submit Transaction</h2>
+        <form class="submit-transaction-form" method="post">
+            {{ transaction_form.hidden_tag() }}
+            <div class="row">
+                <div class="col">
+                    {{ transaction_form.name.label() }}
+                    {{ transaction_form.name(placeholder='Name') }}
+                </div>
+                <div class="col">
+                    {{ transaction_form.type.label() }}
+                    {{ transaction_form.type }}
+                </div>
+                <div class="col">
+                    {{ transaction_form.category.label() }}
+                    <div class="category-select">
+                        {{ transaction_form.category(id='category') }}
+                        <button class="add-category-button" data-toggle="modal" data-target="#Modal-Add-Category">Add Category</button>
+                    </div>
+                </div>
+                <div class="col">
+                    {{ transaction_form.amount.label() }}
+                    {{ transaction_form.amount }}
+                </div>
+                <div class="col">
+                    {{ transaction_form.date.label() }}
+                    {{ transaction_form.date }}
+                </div>
+            </div>
+            <div class="submit-button">
+                {{ transaction_form.submit(id='submit-transaction') }}
+            </div>
+        </form>
+    </div>
 
     <!-- Displaying Transactions -->
     <h2>Transactions</h2>
     <h4>Filter Transactions</h4>
     <form method="post">
         {{ filter_form.hidden_tag() }}
-
         {{ filter_form.type.label() }}
         {{ filter_form.type }}
-
         {{ filter_form.date.label() }}
         {{ filter_form.date }}
-
         {{ filter_form.category.label() }}
         {{ filter_form.category }}
-
         {{ filter_form.price.label() }}
         {{ filter_form.price }}
-
         {{ filter_form.submit }}
     </form>
     <table class="table table-hover table-dark">
         <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Type</th>
-            <th scope="col">Category</th>
-            <th scope="col">Price</th>
-            <th scope="col">Date</th>
-        </tr>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Category</th>
+                <th scope="col">Price</th>
+                <th scope="col">Date</th>
+            </tr>
         </thead>
         <tbody>
-        {% for transaction in transactions %}
-            {% include 'includes/transaction_modal.html' %}
-            <tr>
-                <td>{{ transaction.transaction_id }}</td>
-                <td>{{ transaction.name }}</td>
-                <td>{{ transaction.type }}</td>
-                <td>{{ transaction.category }}</td>
-                <td>{{ "%.2f"|format(transaction.amount_rounded) }}$</td>
-                <td>{{ transaction.date.strftime('%d-%m-%Y') }}</td>
-                <td>
-                    <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Transaction">
-                        Delete
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}
+            {% for transaction in transactions %}
+                {% include 'includes/transaction_modal.html' %}
+                <tr>
+                    <td>{{ transaction.transaction_id }}</td>
+                    <td>{{ transaction.name }}</td>
+                    <td>{{ transaction.type }}</td>
+                    <td>{{ transaction.category }}</td>
+                    <td>{{ "%.2f"|format(transaction.amount_rounded) }}$</td>
+                    <td>{{ transaction.date.strftime('%d-%m-%Y') }}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Transaction">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
+{% endblock %}
 
+{% block scripts %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
 {% endblock %}

@@ -5,8 +5,20 @@
 }
 
 body {
-    background-color: var(--light-gray);
-    font-family: "Montserrat", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
+    background-color: var(--very-light-gray);
+    font-family: "Public Sans", sans-serif;
+    color: var(--dark-blue);
+}
+
+.navbar {
+    background-color: var(--dark-blue);
+    padding: 1em 3em;
+}
+
+.nav-link-item.active .nav-link {
+    color: var(--white);
+}
+
+.nav-link-item .nav-link {
+    color: var(--grayish-blue);
 }

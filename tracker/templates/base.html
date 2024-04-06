@@ -15,20 +15,20 @@
   </head>
   <body>
       <!-- Navbar here -->
-      <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-          <a class="navbar-brand" href="#">Finance Tracker</a>
+      <nav class="navbar navbar-expand-md navbar-dark">
+          <a class="navbar-brand mr-5" href="#"><b>Finance Tracker</b></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
               <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mr-auto">
-                  <li class="nav-item active">
-                      <a class="nav-link" href="{{ url_for('home_page') }}">Home<span class="sr-only">(current)</span></a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link" href="{{ url_for('statistics_page') }}">Statistics</a>
-                  </li>
-              </ul>
+                <li class="nav-item nav-link-item">
+                    <a class="nav-link" id="home" href="{{ url_for('home_page') }}">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item nav-link-item">
+                    <a class="nav-link" id="statistics" href="{{ url_for('statistics_page') }}">Statistics</a>
+                </li>
+            </ul>
               {% if current_user.is_authenticated %}
                   <ul class="navbar-nav">
                       <li class="nav-item">
@@ -85,6 +85,20 @@
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
               integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
               crossorigin="anonymous"></script>
+      <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var navItems = document.querySelectorAll('.nav-link-item');
+                var currentUrl = window.location.href;
+                navItems.forEach(function(navItem) {
+                    var link = navItem.querySelector('.nav-link');
+                    if (currentUrl.includes(link.id)) {
+                        navItem.classList.add('active');
+                    } else {
+                        navItem.classList.remove('active');
+                    }
+                });
+            });
+      </script>
 
       {% block scripts %}
       {% endblock %}
