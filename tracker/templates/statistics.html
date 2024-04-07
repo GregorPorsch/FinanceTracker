@@ -5,54 +5,60 @@ Statistics
 {% endblock %}
 
 {% block content %}
-
-    <div class="row" style="width: 40%;">
-        <div class="total_budget_widget" style="width: 100%;">
-            <h1>Total Budget</h1>
-            <h2 id="total_budget"></h2>
-
-            <h1>Total Income</h1>
-            <h2 id="total_income"></h2>
-
-            <h1>Total Budget</h1>
-            <h2 id="total_expenses"></h2>
-        </div>
-
-        <div class="epxense_pie_chart_container" style="width: 100%">
-            <div class="col-md-4"><!-- form/results will go here --></div>
-            <div class="col-md-8">
-                <h1>Expenses</h1>
-                <canvas id="expense_pie_chart"></canvas>
+    <div class="statistics-widget-container">
+        <div class="widget" style="width: 70%;">
+            <div class="total_budget_widget statistics-container">
+                <h2>Balance Sheet</h2>
+                <div class="total-budget-container">
+                    <h4>Total Budget</h4>
+                    <h3 id="total_budget"></h3>
+                </div>
+                <div class="total-income-container">
+                    <h4>Total Income</h4>
+                    <h3 id="total_income"></h3>
+                </div>
+                <div class="total-expenses-container">
+                    <h4>Total Expenses</h4>
+                    <h3 id="total_expenses"></h3>
+                </div>
+            </div>
+            <div class="transactions_line_graph_container statistics-container">
+                <div class="col-md-4"><!-- form/results will go here --></div>
+                <div class="col-md-8">
+                    <h1>Transactions</h1>
+                    <form method="post">
+                        {{ transaction_history_form.hidden_tag() }}
+                        {{ transaction_history_form.time_period }}
+                        {{ transaction_history_form.submit() }}
+                    </form>
+                    <canvas id="transactions_line_graph"></canvas>
+                </div>
             </div>
         </div>
-
-        <div class="income_pie_cart_container" style="width: 100%;">
-            <div class="col-md-4"><!-- form/results will go here --></div>
-            <div class="col-md-8">
-                <h1>Incomes</h1>
-                <canvas id="income_pie_chart"></canvas>
+        <div class="widget" style="width: 70%;">
+            <div class="expense_pie_chart_container statistics-container" >
+                <div class="col-md-4"><!-- form/results will go here --></div>
+                <div class="col-md-8">
+                    <h1>Expenses</h1>
+                    <canvas id="expense_pie_chart"></canvas>
+                </div>
             </div>
-        </div>
-
-        <div class="transactions_line_graph_container" style="width: 100%;">
-            <form method="post">
-                {{ transaction_history_form.hidden_tag() }}
-                {{ transaction_history_form.time_period.label() }}
-                {{ transaction_history_form.time_period }}
-                {{ transaction_history_form.submit() }}
-            </form>
-            <div class="col-md-4"><!-- form/results will go here --></div>
-            <div class="col-md-8">
-                <h1>Transactions</h1>
-                <canvas id="transactions_line_graph"></canvas>
+            <div class="income_pie_cart_container statistics-container">
+                <div class="col-md-4"><!-- form/results will go here --></div>
+                <div class="col-md-8">
+                    <h1>Incomes</h1>
+                    <canvas id="income_pie_chart"></canvas>
+                </div>
             </div>
         </div>
     </div>
+
 
 {% endblock %}
 
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='statistics.css') }}">
 
     <script>
         // Function to generate a random RGB color
@@ -68,22 +74,79 @@ Statistics
             const total_income = document.getElementById('total_income');
             const total_expenses = document.getElementById('total_expenses');
 
+            const transactions_line_graph_canvas = document.getElementById('transactions_line_graph');
+            const transactions_line_graph_ctx = transactions_line_graph_canvas.getContext('2d')
+
             const expense_pi_chart_canvas = document.getElementById('expense_pie_chart');
             const expense_pie_chart_ctx = expense_pi_chart_canvas.getContext('2d');
 
             const income_pi_chart_canvas = document.getElementById('income_pie_chart');
             const income_pie_chart_ctx = income_pi_chart_canvas.getContext('2d');
 
-            const transactions_line_graph_canvas = document.getElementById('transactions_line_graph');
-            const transactions_line_graph_ctx = transactions_line_graph_canvas.getContext('2d')
-
-            // Fetch the data from the server
             fetch('/api/total_values')
                 .then(response => response.json())
                 .then(data => {
-                    total_budget.innerText = data.total_budget;
-                    total_income.innerText = data.total_income;
-                    total_expenses.innerText = data.total_expenses;
+                    total_budget.innerText = data.total_budget + "$";
+                    total_income.innerText = data.total_income + "$";
+                    total_expenses.innerText = data.total_expenses + "$";
+                })
+                .catch(error => console.error('Error:', error));
+
+            fetch('/api/transactions_over_time?time_period={{ time_period }}')
+                .then(response => response.json())
+                .then(data => {
+                    let dates = Object.keys(data);
+                    let incomes = dates.map(date => data[date].income);
+                    let expenses = dates.map(date => data[date].expense);
+
+                    let chart = new Chart(transactions_line_graph_ctx, {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [{
+                                label: 'Income',
+                                data: incomes,
+                                borderColor: 'rgb(75, 192, 192)',
+                                fill: false
+                            }, {
+                                label: 'Expense',
+                                data: expenses,
+                                borderColor: 'rgb(255, 99, 132)',
+                                fill: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            title: {
+                                display: true,
+                                text: 'Income and Expense Over Time'
+                            },
+                            tooltips: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            hover: {
+                                mode: 'nearest',
+                                intersect: true
+                            },
+                            scales: {
+                                xAxes: [{
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Date'
+                                    }
+                                }],
+                                yAxes: [{
+                                    display: true,
+                                    scaleLabel: {
+                                        display: true,
+                                        labelString: 'Amount'
+                                    }
+                                }]
+                            }
+                        }
+                    });
                 });
 
             fetch('/api/expenses_by_category')
@@ -162,62 +225,6 @@ Statistics
                     });
                 });
 
-            fetch('/api/transactions_over_time?time_period={{ time_period }}')
-                .then(response => response.json())
-                .then(data => {
-                    let dates = Object.keys(data);
-                    let incomes = dates.map(date => data[date].income);
-                    let expenses = dates.map(date => data[date].expense);
-
-                    let chart = new Chart(transactions_line_graph_ctx, {
-                        type: 'line',
-                        data: {
-                            labels: dates,
-                            datasets: [{
-                                label: 'Income',
-                                data: incomes,
-                                borderColor: 'rgb(75, 192, 192)',
-                                fill: false
-                            }, {
-                                label: 'Expense',
-                                data: expenses,
-                                borderColor: 'rgb(255, 99, 132)',
-                                fill: false
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            title: {
-                                display: true,
-                                text: 'Income and Expense Over Time'
-                            },
-                            tooltips: {
-                                mode: 'index',
-                                intersect: false,
-                            },
-                            hover: {
-                                mode: 'nearest',
-                                intersect: true
-                            },
-                            scales: {
-                                xAxes: [{
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Date'
-                                    }
-                                }],
-                                yAxes: [{
-                                    display: true,
-                                    scaleLabel: {
-                                        display: true,
-                                        labelString: 'Amount'
-                                    }
-                                }]
-                            }
-                        }
-                    });
-                });
         }
     </script>
 {% endblock %}

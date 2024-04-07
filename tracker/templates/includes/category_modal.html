@@ -10,12 +10,13 @@
         </button>
       </div>
       <div class="modal-body">
-        Enter the name of the new modal you want to add.
-        <form method="POST">
+        Enter the name of the new category you want to add.
+        <form method="POST" action="/add_category">
           {{ category_form.hidden_tag() }}
-          {{ category_form.name.label() }}
-          {{ category_form.name }}
-          {{ category_form.submit(class="btn btn-primary") }}
+          <div class="modal-add-category-input">
+            {{ category_form.name }}
+            {{ category_form.submit() }}
+          </div>
         </form>
       </div>
     </div>

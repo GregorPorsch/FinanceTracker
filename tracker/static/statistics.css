@@ -1,0 +1,84 @@
+.statistics-widget-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 3em auto;
+}
+
+.widget {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7em;
+    margin-bottom: 1em;
+    border-radius: 0.3em;
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+}
+
+.statistics-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.total_budget_widget,
+.expense_pie_chart_container {
+    border-right: 1px solid var(--black);
+}
+
+.total-budget-container {
+    text-align: center;
+}
+
+.transactions_line_graph_container form {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5em 0;
+}
+
+.transactions_line_graph_container form select,
+.transactions_line_graph_container form input[type="submit"] {
+    height: 2em;
+    padding: 0.5em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: var(--white);
+    color: var(--dark-blue);
+    font-size: 1em;
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+    width: 100%;
+    outline: none;
+}
+
+.transactions_line_graph_container form select {
+    cursor: pointer;
+}
+
+.transactions_line_graph_container form input[type="submit"] {
+    width: 100%;
+    height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 3em;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+}
+
+.transactions_line_graph_container form input[type="submit"]:hover {
+    opacity: 80%;
+}

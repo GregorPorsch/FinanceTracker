@@ -55,7 +55,7 @@ class CategoryForm(FlaskForm):
         if category:
             raise ValidationError("Category already exists. Please choose a different category name.")
 
-    name = StringField(label="Category Name", validators=[Length(min=1, max=30), DataRequired()])
+    name = StringField(label="Category Name", name="category_name", validators=[Length(min=1, max=30), DataRequired()])
     submit = SubmitField(label="Add category", name="submit_category")
 
 class DeleteTransactionForm(FlaskForm):

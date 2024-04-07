@@ -10,11 +10,11 @@
         </button>
       </div>
       <div class="modal-body">
-        Do you want to delete the transaction "{{ transaction.name }}"?
-        <form method="POST" action="/">
+        <p class="delete-transaction-name-p"></p>
+        <form method="POST" action="/delete_transaction">
             {{ delete_transaction_form.hidden_tag() }}
-            <input id="deleted_transaction" name="deleted_transaction" type="hidden" value="{{ transaction.transaction_id }}">
-            {{ delete_transaction_form.submit(class="btn btn-outline-danger btn-block") }}
+            <input id="deleted_transaction" name="deleted_transaction" type="hidden" value="">
+            {{ delete_transaction_form.submit(class="btn btn-outline-danger btn-block rounded-pill") }}
         </form>
       </div>
     </div>

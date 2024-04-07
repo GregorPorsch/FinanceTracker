@@ -21,6 +21,12 @@
     align-items: center;
 }
 
+.submit-transaction-form .row select,
+.submit-transaction-form .row input {
+    width: 100%;
+    height: 2em;
+}
+
 .row {
     width: 100%;
     display: flex;
@@ -111,6 +117,91 @@
 }
 
 .submit-button input[type="submit"]:hover {
+    opacity: 80%;
+}
+
+.transaction-history-filter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 2em auto;
+    box-shadow: 5px 5px 13px 5px rgba(0,0,0,0.3);
+    width: 90%;
+    color: var(--dark-blue);
+    overflow: hidden;
+    border-radius: 15px;
+    padding: 1em;
+    background-color: var(--white);
+}
+
+.transaction-history-filter form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.transaction-history-filter h2 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.transaction-history-filter .row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+}
+
+.transaction-history-filter .row .col {
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.transaction-history-filter .submit-button {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.transaction-history-filter .row select,
+.transaction-history-filter .row input {
+    padding: 0.5em;
+    border: none;
+    border-radius: 0.3em;
+    background-color: var(--white);
+    color: var(--dark-blue);
+    font-size: 1em;
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0,0.1);
+    width: 100%;
+    outline: none;
+}
+
+.transaction-history-filter .row select {
+    cursor: pointer;
+}
+
+.transaction-history-filter .submit-button {
+    width: 100%;
+}
+
+.transaction-history-filter .submit-button input[type="submit"] {
+    width: 100%;
+    padding: 0.7em;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 3em;
+    cursor: pointer;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.transaction-history-filter .submit-button input[type="submit"]:hover {
     opacity: 80%;
 }
 

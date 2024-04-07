@@ -44,53 +44,82 @@
     </div>
 
     <!-- Displaying Transactions -->
-    <h2>Transactions</h2>
-    <h4>Filter Transactions</h4>
-    <form method="post">
-        {{ filter_form.hidden_tag() }}
-        {{ filter_form.type.label() }}
-        {{ filter_form.type }}
-        {{ filter_form.date.label() }}
-        {{ filter_form.date }}
-        {{ filter_form.category.label() }}
-        {{ filter_form.category }}
-        {{ filter_form.price.label() }}
-        {{ filter_form.price }}
-        {{ filter_form.submit }}
-    </form>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Name</th>
-                <th scope="col">Type</th>
-                <th scope="col">Category</th>
-                <th scope="col">Price</th>
-                <th scope="col">Date</th>
-                <th scope="col">Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transaction in transactions %}
-                {% include 'includes/transaction_modal.html' %}
+    <div class="transaction-history-container">
+        <div class="transaction-history-filter">
+            <h2>Transaction History</h2>
+            <form method="post">
+                {{ filter_form.hidden_tag() }}
+                <div class="row">
+                    <div class="col">
+                        {{ filter_form.type.label() }}
+                        {{ filter_form.type }}
+                    </div>
+                    <div class="col">
+                        {{ filter_form.date.label() }}
+                        {{ filter_form.date }}
+                    </div>
+                    <div class="col">
+                        {{ filter_form.category.label() }}
+                        {{ filter_form.category }}
+                    </div>
+                    <div class="col">
+                        {{ filter_form.price.label() }}
+                        {{ filter_form.price }}
+                    </div>
+                    <div class="col">
+                        <div class="submit-button">
+                            {{ filter_form.submit }}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>{{ transaction.transaction_id }}</td>
-                    <td>{{ transaction.name }}</td>
-                    <td>{{ transaction.type }}</td>
-                    <td>{{ transaction.category }}</td>
-                    <td>{{ "%.2f"|format(transaction.amount_rounded) }}$</td>
-                    <td>{{ transaction.date.strftime('%d-%m-%Y') }}</td>
-                    <td>
-                        <button type="button" class="btn btn-outline-danger" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Transaction">
-                            Delete
-                        </button>
-                    </td>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Delete</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                    {% include 'includes/transaction_modal.html' %}
+                    <tr>
+                        <td>{{ transaction.transaction_id }}</td>
+                        <td>{{ transaction.name }}</td>
+                        <td>{{ transaction.type }}</td>
+                        <td>{{ transaction.category }}</td>
+                        <td>{{ "%.2f"|format(transaction.amount_rounded) }}$</td>
+                        <td>{{ transaction.date.strftime('%d-%m-%Y') }}</td>
+                        <td>
+                            <button type="button" class="delete-transaction-button btn btn-outline-danger" data-transaction-id="{{ transaction.transaction_id }}" data-transaction-name="{{ transaction.name }}" style="margin-bottom:5px" data-toggle="modal" data-target="#Modal-Delete-Transaction">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 {% block scripts %}
     <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='category_modal.css') }}">
+
+    <script>
+      $(document).ready(function() {
+        $('.delete-transaction-button').click(function() {
+          var transactionId = $(this).data('transaction-id');
+            var transactionName = $(this).data('transaction-name');
+            $('#deleted_transaction').val(transactionId);
+            $('.delete-transaction-name-p').text('Are you sure you want to delete the transaction "' + transactionName + '"?' );
+          });
+      });
+    </script>
 {% endblock %}

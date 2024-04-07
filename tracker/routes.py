@@ -40,31 +40,6 @@ def home_page():
         for err_msg in transaction_form.errors.values():
             flash(err_msg[0], category="danger")
 
-    if "submit_category" in request.form and category_form.validate_on_submit():
-        category_to_create = Category(name=category_form.name.data, user_id=current_user.user_id)
-        db.session.add(category_to_create)
-        db.session.commit()
-        flash(f'Category "{category_to_create.name}" added successfully!', category='success')
-        return redirect(url_for('home_page'))
-
-    if category_form.errors != {}:
-        for err_msg in category_form.errors.values():
-            flash(err_msg[0], category="danger")
-
-    if "delete_transaction" in request.form and delete_transaction_form.validate_on_submit():
-        transaction_to_delete = Transaction.query.filter_by(transaction_id=request.form.get("deleted_transaction")).first()
-        if transaction_to_delete:
-            db.session.delete(transaction_to_delete)
-            db.session.commit()
-            flash(f'Transaction "{transaction_to_delete.name}" deleted successfully!', category='info')
-            return redirect(url_for('home_page'))
-        else:
-            flash(f'Transaction not found!', category='danger')
-
-    if delete_transaction_form.errors != {}:
-        for err_msg in delete_transaction_form.errors.values():
-            flash(err_msg[0], category="danger")
-
     # Start with a base query
     query = Transaction.query.filter_by(user_id=current_user.user_id)
 
@@ -101,7 +76,6 @@ def statistics_page():
     transaction_history_form = TransactionHistoryForm()
 
     if transaction_history_form.validate_on_submit():
-        print("Hello, world!")
         return render_template('statistics.html',
                                transaction_history_form=transaction_history_form,
                                time_period=transaction_history_form.time_period.data)
@@ -222,5 +196,35 @@ def transactions_over_time():
 def total_values():
     total_income = db.session.query(func.sum(Transaction.amount_rounded)).filter_by(user_id=current_user.user_id, type="Income").scalar()
     total_expenses = db.session.query(func.sum(Transaction.amount_rounded)).filter_by(user_id=current_user.user_id, type="Expense").scalar()
-    total_budget = round(float(total_income) - float(total_expenses), 2)
+    total_budget = round(total_income - total_expenses, 2)
+    print(total_income, total_expenses, total_budget)
     return jsonify({"total_expenses": total_expenses, "total_income": total_income, "total_budget": total_budget})
+
+@app.route('/delete_transaction', methods=['POST'])
+def delete_transaction():
+    transaction_id = request.form.get('deleted_transaction')
+    transaction = Transaction.query.get(transaction_id)
+    if transaction:
+        db.session.delete(transaction)
+        db.session.commit()
+    else:
+        flash("Transaction not found!", category="danger")
+    return redirect(url_for('home_page'))
+
+@app.route('/add_category', methods=['POST'])
+def add_category():
+    try:
+        category_name = request.form.get('category_name')
+        print(category_name)
+        if not category_name:
+            flash("Category name not provided!", category="danger")
+        elif Category.query.filter_by(name=category_name, user_id=current_user.user_id).first():
+            flash("Category already exists. Please choose a different category name.", category="danger")
+        else:
+            category_to_create = Category(name=category_name, user_id=current_user.user_id)
+            db.session.add(category_to_create)
+            db.session.commit()
+            flash(f'Category "{category_to_create.name}" added successfully!', category='success')
+    except:
+        flash("An error occured adding the category.", category="danger")
+    return redirect(url_for('home_page'))
