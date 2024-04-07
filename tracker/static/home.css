@@ -113,3 +113,52 @@
 .submit-button input[type="submit"]:hover {
     opacity: 80%;
 }
+
+.table {
+    margin: 2em auto;
+    box-shadow: 5px 5px 13px 5px rgba(0,0,0,0.3);
+    width: 90%;
+    color: var(--dark-blue);
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.table th, .table td {
+    padding: 1em;
+    text-align: center;
+    background-color: transparent;
+}
+
+.table tr:first-child th:first-child {
+    border-top-left-radius: 15px;
+}
+
+.table tr:first-child th:last-child {
+    border-top-right-radius: 15px;
+}
+
+.table tr:last-child td:first-child {
+    border-bottom-left-radius: 15px;
+}
+
+.table tr:last-child td:last-child {
+    border-bottom-right-radius: 15px;
+}
+
+.table tr:nth-child(even) {
+    background-color: var(--light-grayish-blue);
+}
+
+.table tr:nth-child(odd) {
+    background-color: var(--white);
+}
+
+.table th {
+    background-color: var(--dark-blue);
+    color: white;
+}
+
+.table tbody tr:hover {
+    background-color: var(--dark-blue);
+    color: var(--white);
+}

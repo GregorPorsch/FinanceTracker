@@ -5,28 +5,37 @@ Register
 {% endblock %}
 
 {% block content %}
-    <form method="post">
-        {{ register_form.hidden_tag() }}
-                <h1 class="h3 mb-3 font-weight-normal">Please create your account.</h1>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+    <div class="register-container">
+        <form method="post">
+            {{ register_form.hidden_tag() }}
+            <h1>Register</h1>
+
+            <div class="register-name">
                 {{ register_form.username.label() }}
                 {{ register_form.username(placeholder="User Name") }}
-
+            </div>
+            <div class="register-email">
                 {{ register_form.email_address.label() }}
                 {{ register_form.email_address(placeholder="Email Address") }}
-
+            </div>
+            <div class="register-password">
                 {{ register_form.password1.label() }}
                 {{ register_form.password1(placeholder="Password") }}
-
+            </div>
+            <div class="register-password2">
                 {{ register_form.password2.label() }}
                 {{ register_form.password2(placeholder="Confirm Password") }}
+            </div>
 
-                <br>
+            <br>
 
-                <div>
-                    <h6>Already have an account?</h6>
-                    <a href="{{ url_for('login_page') }}">Login</a>
-                </div>
-
+            <div>
+                <h6>Already have an account? <a href="{{ url_for('login_page') }}">Login</a></h6>
+            </div>
+            <div class="register-submit">
                 {{ register_form.submit() }}
-    </form>
+            </div>
+        </form>
+    </div>
 {% endblock %}
