@@ -32,13 +32,13 @@ Dieses Projekt wurde mit den folgenden Technologien entwickelt:
 
 Screenshots des Projekts:
 
-![Bild 1](img/bild1.png)
+![Bild 1](./img/README_img_1.png)
 _Bild 1: Hauptseite der Anwendung_
 
-![Bild 2](img/bild2.png)
+![Bild 2](./img/README_img_2.png)
 _Bild 2: Visualisierung der Finanzdaten_
 
-![Bild 3](img/bild3.png)
+![Bild 3](./img/README_img_3.png)
 _Bild 3: Benutzer-Login-Seite_
 
 ## Installation und Nutzung
